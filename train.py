@@ -146,14 +146,13 @@ if __name__ == '__main__':
                 factor = 0.1
             return factor
     elif args.dataset == 'CPMW':
-        videos = ['Lunch1', 'Lunch2', 'Edge_cases', 'IRill', 'Activity',
-                  'MW']
+        videos = ['Lunch1', 'High_activity', 'IRill']
         # if args.high_resolution:
         #     videos += ['All_off', 'IRfilter']
-        train_img_dir = [f'../../../COSSY/{s}/' for s in videos]
-        train_json = [f'../../../COSSY/annotations/{s}.json' for s in videos]
-        val_img_dir = '../../../COSSY/Lunch3/'
-        val_json = '../../../COSSY/annotations/Lunch3.json'
+        train_img_dir = [f'/notebooks/RAPid Dataset/{s}/' for s in videos]
+        train_json = [f'/notebooks/RAPid Dataset/annotations/{s}.json' for s in videos]
+        val_img_dir = '/notebooks/RAPid Dataset/Lunch3/'
+        val_json = '/notebooks/RAPid Dataset/annotations/Lunch3.json'
         lr_SGD = 0.0001 / batch_size / subdivision
         # Learning rate setup
         def burnin_schedule(i):
