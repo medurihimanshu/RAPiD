@@ -218,9 +218,9 @@ class PredLayer(nn.Module):
         ti_all = tx_all.long()
         tj_all = ty_all.long()
 
-        norm_anch_wh = anchors[:,0:2] / img_hw # normalized
+        norm_anch_wh = anchors[:,0:2] / torch.Tensor(list(img_hw)).cuda() # normalized
         norm_anch_00wha = self.anch_00wha_all.clone().to(device=device)
-        norm_anch_00wha[:,2:4] /= img_hw # normalized
+        norm_anch_00wha[:,2:4] /= torch.Tensor(list(img_hw)).cuda() # normalized
 
         # traverse all images in a batch
         valid_gt_num = 0

@@ -29,9 +29,9 @@ if __name__ == "__main__":
     # command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--imgs_path', type=str,
-                        default='images/tiny_val/one')
+                        default='/notebooks/RAPid Dataset/Lunch3')
     parser.add_argument('--gt_path', type=str,
-                        default='images/tiny_val/one.json')
+                        default='/notebooks/RAPid Dataset/annotations/Lunch3.json')
     parser.add_argument('--metric', type=str,
                         default='AP',
                         choices=['AP', 'F', 'counting'])

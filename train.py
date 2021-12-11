@@ -19,7 +19,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default='rapid_pL1')
     parser.add_argument('--backbone', type=str, default='dark53')
-    parser.add_argument('--dataset', type=str, default='COCO')
+    parser.add_argument('--dataset', type=str, default='CPMW')
     parser.add_argument('--batch_size', type=int, default=1)
 
     parser.add_argument('--high_resolution', action='store_true')
@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--eval_interval', type=int, default=1000)
     parser.add_argument('--img_interval', type=int, default=500)
     parser.add_argument('--print_interval', type=int, default=1)
-    parser.add_argument('--checkpoint_interval', type=int, default=2000)
+    parser.add_argument('--checkpoint_interval', type=int, default=200)
     
     parser.add_argument('--debug', action='store_true') # default=True)
     return parser.parse_args()
@@ -146,7 +146,8 @@ if __name__ == '__main__':
                 factor = 0.1
             return factor
     elif args.dataset == 'CPMW':
-        videos = ['Lunch1', 'High_activity', 'IRill']
+        # videos = ['Lunch1', 'High_activity', 'IRill']
+        videos = ['IRill']
         # if args.high_resolution:
         #     videos += ['All_off', 'IRfilter']
         train_img_dir = [f'/notebooks/RAPid Dataset/{s}/' for s in videos]
@@ -226,21 +227,21 @@ if __name__ == '__main__':
     start_time = timer.tic()
     for iter_i in range(start_iter, 500000):
         # evaluation
-        if iter_i % args.eval_interval == 0 and (args.dataset != 'COCO' or iter_i > 0):
-            with timer.contexttimer() as t0:
-                model.eval()
-                model_eval = api.Detector(conf_thres=0.005, model=model)
-                dts = model_eval.detect_imgSeq(val_img_dir, input_size=target_size)
-                str_0 = val_set.evaluate_dtList(dts, metric='AP')
-            s = f'\nCurrent time: [ {timer.now()} ], iteration: [ {iter_i} ]\n\n'
-            s += str_0 + '\n\n'
-            s += f'Validation elapsed time: [ {t0.time_str} ]'
-            print(s)
-            logger.add_text('Validation summary', s, iter_i)
-            logger.add_scalar('Validation AP[IoU=0.5]', val_set._getAP(0.5), iter_i)
-            logger.add_scalar('Validation AP[IoU=0.75]', val_set._getAP(0.75), iter_i)
-            logger.add_scalar('Validation AP[IoU=0.5:0.95]', val_set._getAP(), iter_i)
-            model.train()
+        # if iter_i % args.eval_interval == 0 and (args.dataset != 'COCO' or iter_i > 0):
+        #     with timer.contexttimer() as t0:
+        #         model.eval()
+        #         model_eval = api.Detector(conf_thres=0.005, model=model)
+        #         dts = model_eval.detect_imgSeq(val_img_dir, input_size=target_size)
+        #         str_0 = val_set.evaluate_dtList(dts, metric='AP')
+        #     s = f'\nCurrent time: [ {timer.now()} ], iteration: [ {iter_i} ]\n\n'
+        #     s += str_0 + '\n\n'
+        #     s += f'Validation elapsed time: [ {t0.time_str} ]'
+        #     print(s)
+        #     logger.add_text('Validation summary', s, iter_i)
+        #     logger.add_scalar('Validation AP[IoU=0.5]', val_set._getAP(0.5), iter_i)
+        #     logger.add_scalar('Validation AP[IoU=0.75]', val_set._getAP(0.75), iter_i)
+        #     logger.add_scalar('Validation AP[IoU=0.5:0.95]', val_set._getAP(), iter_i)
+        #     model.train()
 
         # subdivision loop
         optimizer.zero_grad()
@@ -295,14 +296,14 @@ if __name__ == '__main__':
             torch.save(state_dict, save_path)
 
         # save detection
-        if iter_i > 0 and iter_i % args.img_interval == 0:
-            for img_path in eval_img_paths:
-                eval_img = Image.open(img_path)
-                dts = api.detect_once(model, eval_img, conf_thres=0.1, input_size=target_size)
-                np_img = np.array(eval_img)
-                visualization.draw_dt_on_np(np_img, dts)
-                np_img = cv2.resize(np_img, (416,416))
-                # cv2.imwrite(f'./results/eval_imgs/{job_name}_{today}_{iter_i}.jpg', np_img)
-                logger.add_image(img_path, np_img, iter_i, dataformats='HWC')
+        # if iter_i > 0 and iter_i % args.img_interval == 0:
+        #     for img_path in eval_img_paths:
+        #         eval_img = Image.open(img_path)
+        #         dts = api.detect_once(model, eval_img, conf_thres=0.1, input_size=target_size)
+        #         np_img = np.array(eval_img)
+        #         visualization.draw_dt_on_np(np_img, dts)
+        #         np_img = cv2.resize(np_img, (416,416))
+        #         # cv2.imwrite(f'./results/eval_imgs/{job_name}_{today}_{iter_i}.jpg', np_img)
+        #         logger.add_image(img_path, np_img, iter_i, dataformats='HWC')
 
-            model.train()
+        #     model.train()

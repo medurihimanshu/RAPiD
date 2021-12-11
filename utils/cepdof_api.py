@@ -8,7 +8,7 @@ from pycocotools import mask as maskUtils
 
 
 class CEPDOFeval(cocoeval.COCOeval):
-    def __init__(self, gt_json, dt_json, iouType='bbox'):
+    def __init__(self, gt_json, dt_json, iouType='bbox',use_ext='True'):
         assert iouType == 'bbox', 'Only support (rotated) bbox iou type'
         self.gt_json = json.load(open(gt_json, 'r')) if isinstance(gt_json, str) \
                        else gt_json
@@ -21,6 +21,7 @@ class CEPDOFeval(cocoeval.COCOeval):
         # Initialize some variables which will be modified later
         self.evalImgs = defaultdict(list)   # per-image per-category eval results
         self.eval     = {}                  # accumulated evaluation results
+        self.use_ext = use_ext
 
     def _preprocess_dt_gt(self):
         # We are not using 'id' in ground truth annotations because it's useless.
